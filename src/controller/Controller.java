@@ -27,6 +27,8 @@ public class Controller {
     Potion potion = new Potion(75);
     Armor breastplate = new Armor("Iron Breastplate", 12);
     Treasure endTreasure = new Treasure();
+    Weapon shortsword = new Weapon("Shortsword", 15, 2, 20);
+    Armor chainmail = new Armor("Chainmail", 5);
 
     boolean game = true;
 
@@ -36,8 +38,8 @@ public class Controller {
         Creature crt1 = new Creature("Ronnie", 60, 18, 12, 140);
         Creature crt2 = new Creature("Garrosh Hellscream", 80, 22, 9, 210);
         Creature crt3 = new Creature("Kim Jong Un", 75, 10, 90, 105);
-        
-        player.setWeapon(sulfuras);
+        Creature crt4 = new Creature("Illidan Stormrage", 60, 20, 5, 400);
+        Creature crt5 = new Creature("Hillary Clinton", 10, 60, 1, 9000);
 
         //Create trap(s) to put in the rooms
         Trap dartTrap = new Trap(25, "A dart flies through the room and hits you in the eye ball.", 60);
@@ -61,7 +63,7 @@ public class Controller {
         Room room14 = new Room(14, "This room reminds you of your parents old bedroom.. but why?", doorTrap);
         Room room15 = new Room(15, "A voice cries in the distance, but you can't hear what");
         Room room16 = new Room(16, "The voice becomes more clear");
-        Room room17 = new Room(17, "You enter a bright room where you find a chest in the corner containing pornography and gold");
+        Room room17 = new Room(17, "You enter a bright room where you find a chest in the corner containing pornography and gold",crt5);
         Room room18 = new Room(18, "The room becomes bigger but still just as dark");
         Room room19 = new Room(19, "Visibility is low, handicapping you of one of your most valuable senses", 25);
         Room room20 = new Room(20, "The room has a gloomy atmosphere", crt3);
@@ -71,7 +73,7 @@ public class Controller {
         Room room24 = new Room(24, "The blue light enhances");
         Room room25 = new Room(25, "A bright golden light shines from the ceilling of the cave", 45);
         Room room26 = new Room(26, "The brightness has now faded into complete obscurity");
-        Room room27 = new Room(27, "You see the light at the end of the tunnel, only for you to realize you're hallucinating");
+        Room room27 = new Room(27, "You see the light at the end of the tunnel, only for you to realize you're hallucinating",crt4);
         Room room28 = new Room(28, "You feel surrounded by a devouring darkness", doorTrap);
         Room room29 = new Room(29, "You sense a lightbeam that has made its way down the cracks from the ceiling above you..");
 
@@ -80,11 +82,13 @@ public class Controller {
         room3.getItemList().add(potion);
         room21.getItemList().add(breastplate);
         room29.getItemList().add(endTreasure);
+        room5.getItemList().add(chainmail);
+        room11.getItemList().add(shortsword);
 
         //sets players current room to room1
         player.setCroom(room1);
 
-        //adds all romes to roomlist
+        //adds all rooms to roomlist
         roomList.add(room1);
         roomList.add(room2);
         roomList.add(room3);
@@ -241,6 +245,7 @@ public class Controller {
         System.out.println("Congratulations, you have ventured through the dungeon,");
         System.out.println("fought monsters, looted gold, and found the End Treasure.");
         System.out.println("-----The game is over-----");
+        System.out.println("-----Your score: "+ player.getGold() + "-----");
 
     }
 
@@ -293,6 +298,7 @@ public class Controller {
                 System.out.println("You activated a trap!");
                 System.out.println("xxxxxxxxxxxxxxxxxxxxx");
 
+                //prints traps damage and its description
                 System.out.println(player.getCroom().getTrap().getDescription() + " it deals " + player.getCroom().getTrap().getDamage() + " damage to you!");
 
                 //reduces players health by traps damage
@@ -342,6 +348,7 @@ public class Controller {
 
     public void checkForDeath() {
 
+        //if players health is less than or equal to 0
         if (player.getHealth() <= 0) {
             System.out.println("You have died. Well done");
             System.out.println("----- GAME OVER -----");
@@ -352,14 +359,19 @@ public class Controller {
 
     public void checkForMoreOptions(int i) {
 
+        //if room has gold, print pickup gold option
         if (player.getCroom().getGold() > 0) {
             System.out.println("[" + i + "] Pick up gold");
             i++;
         }
+        
+        //if room has items, print pickup item option
         if (player.getCroom().getItemList().size() > 0) {
             System.out.println("[" + i + "] Pick up item");
             i++;
         }
+        
+        //if inventory list has items, print check inventory option
         if (player.getInventoryList().size() > 0) {
             System.out.println("[" + i + "] Check inventory");
             i++;
@@ -373,6 +385,7 @@ public class Controller {
 
             case "move north": {
 
+                //checks if current rooms north-relation DOESN'T exist
                 if (null == player.getCroom().getNorth()) {
                     System.out.println("Moving north is not a valid option");
                     break;
@@ -397,6 +410,7 @@ public class Controller {
 
             case "move south": {
 
+                //checks if current rooms south-relation DOESN'T exist
                 if (null == player.getCroom().getSouth()) {
                     System.out.println("Moving south is not a valid option");
                     break;
@@ -421,6 +435,7 @@ public class Controller {
 
             case "move east": {
 
+                //checks if current rooms east-relation DOESN'T exist
                 if (null == player.getCroom().getEast()) {
                     System.out.println("Moving east is not a valid option");
                     break;
@@ -445,6 +460,7 @@ public class Controller {
 
             case "move west": {
 
+                //checks if current rooms west-relation DOESN'T exist
                 if (null == player.getCroom().getWest()) {
                     System.out.println("Moving west is not a valid option");
                     break;
@@ -469,6 +485,7 @@ public class Controller {
 
             case "pick up gold": {
 
+                //checks if current rooms gold count is larger than 0
                 if (player.getCroom().getGold() > 0) {
                     //adds rooms gold to players current gold count
                     player.setGold(player.getCroom().getGold() + player.getGold());
@@ -490,8 +507,10 @@ public class Controller {
 
             case "pick up item": {
 
+                //checks if there is an item in the current room
                 if (player.getCroom().getItemList().size() > 0) {
 
+                    //assigns variable cItem to the item in the itemList of the current room
                     Item cItem = player.getCroom().getItemList().get(0);
 
                     //gives the player the item in the list (there is always only one, had there been less you will not get in here)
@@ -513,6 +532,7 @@ public class Controller {
 
             case "check inventory": {
 
+                //checks if players inventory list is less than or equal to 0 (should never ben less than 0??)
                 if (player.getInventoryList().size() <= 0) {
                     break;
                 }
@@ -550,10 +570,12 @@ public class Controller {
         System.out.println("|-----------------------|");
         
     }
-
+    
     public void manageInventory() {
 
         System.out.println("Your inventory contains:");
+        
+        
         for (Item cItem : player.getInventoryList()) {
 
             System.out.println("--" + cItem.getName());
@@ -581,30 +603,49 @@ public class Controller {
 
                     if (cItem instanceof Armor) {
                         System.out.println("got in here");
+                        
+                        //checks if player already has armor equipped
                         if (null != player.getArmor()) {
+                            
+                            //puts a copy of players armor item into inventory
                             player.getInventoryList().add(player.getArmor());
+                            
+                            //removes armor item from players armor slot
                             player.setArmor(null);
                         }
+                        
+                        //sets players armor slot equal to requested item
                         player.setArmor((Armor) cItem);
                         System.out.println("You equipped: " + cItem.getName());
 
-                        int indexOfWeapon = player.getInventoryList().indexOf(cItem);
+                        //sets variable indexOfItem equal to the index of the item position in the inventoryList
+                        int indexOfItem = player.getInventoryList().indexOf(cItem);
 
-                        player.getInventoryList().remove(indexOfWeapon);
+                        //removes requested item from inventory
+                        player.getInventoryList().remove(indexOfItem);
                         break;
 
                     }
                     if (cItem instanceof Weapon) {
 
+                        //checks if player already has weapon equipped
                         if (null != player.getWeapon()) {
+                            
+                            //puts a copy of players weapon item into inventory
                             player.getInventoryList().add(player.getWeapon());
+                            
+                            //removes weapon item from players weapon slot
                             player.setWeapon(null);
                         }
+                        
+                        //sets players weapon slot equal to requested item
                         player.setWeapon((Weapon) cItem);
                         System.out.println("You equipped: " + cItem.getName());
 
+                        //sets variable indexOfItem equal to the index of the item position in the inventoryList
                         int indexOfWeapon = player.getInventoryList().indexOf(cItem);
 
+                        //removes requested item from inventory
                         player.getInventoryList().remove(indexOfWeapon);
                         break;
                     }
@@ -633,7 +674,12 @@ public class Controller {
         }
 
     }
-
+     /**
+      * Calculates the amount to heal, from a given potion.
+      * 
+      * @param cPotion The potion that you want to calculate the healing from
+      * @return missingHP The amount of HP to be healed
+      */
     public double calculateHealing(Potion cPotion) {
 
         double res = 0.0;
@@ -730,8 +776,10 @@ public class Controller {
 
         double res;
 
+        //Assigns currentCreature variable to the first creature in the monsterlist of the current room
         Creature currentCreature = player.getCroom().getMonsterList().get(0);
 
+        //Assigns creatureDamage variable to current creatures attackdamage
         double creatureDamage = currentCreature.getAttackDamage();
 
         //rolls to check if attack is critical

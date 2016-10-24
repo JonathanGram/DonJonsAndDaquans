@@ -6,9 +6,8 @@ package entity;
  */
 public class Armor extends Item {
     
-    int stamina;
     String name;
-
+    int stamina;
     public Armor(String name, int stamina) {
         this.name = name;
         this.stamina = stamina;
